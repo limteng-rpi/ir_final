@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Torrent</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/css/normalize.css"/>
+    <link rel="stylesheet" href="/static/css/base.css"/>
+    <link rel="stylesheet" href="/static/css/index.css"/>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css" rel="stylesheet"/>
+
+{#    <script src="https://code.jquery.com/jquery-3.3.1.min.js"#}
+{#            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"#}
+{#            crossorigin="anonymous"></script>#}
+    <script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1/dist/Chart.min.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js"></script>
+</head>
+<body>
+{% include 'nav.html' %}
+
+<div id="map-wrapper">
+
+</div>
+
+<div id="stats-strip"></div>
+<div id="stats">
+    <div id="stats-left">
+        <div class="block-title">Top Entities</div>
+        <div id="top-entity-list-wrapper">
+            <ul id="top-entity-list">
+{#                <li class="top-entity">#}
+{#                    <div class="top-entity-name">United States</div>#}
+{#                    <div class="top-entity-info">#}
+{#                        <span class="tag">235,204</span>#}
+{#                        <span class="tag">Geo-political Entity</span>#}
+{#                    </div>#}
+{#                </li>#}
+{#                <li class="top-entity">#}
+{#                    <div class="top-entity-name">Barack Obama</div>#}
+{#                    <div class="top-entity-info">#}
+{#                        <span class="tag">213,120</span>#}
+{#                        <span class="tag">Person</span>#}
+{#                    </div>#}
+{#                </li>#}
+{#                <li class="top-entity">#}
+{#                    <div class="top-entity-name">New York State</div>#}
+{#                    <div class="top-entity-info">#}
+{#                        <span class="tag">102,398</span>#}
+{#                        <span class="tag">Geo-political Entity</span>#}
+{#                    </div>#}
+{#                </li>#}
+{#                <li class="top-entity">#}
+{#                    <div class="top-entity-name">Boston</div>#}
+{#                    <div class="top-entity-info">#}
+{#                        <span class="tag">82.719</span>#}
+{#                        <span class="tag">Geo-political Entity</span>#}
+{#                    </div>#}
+{#                </li>#}
+            </ul>
+        </div>
+    </div>
+    <div id="stats-right">
+        <div class="block-title">Trending Entities</div>
+        <div id="trending-entity-list-wrapper">
+            <ul id="trending-entity-list">
+{#                <li class="trending-entity">#}
+{#                    <div class="trending-entity-name">United States</div>#}
+{#                    <div class="trending-entity-info">#}
+{#                        <span class="tag">235,204</span>#}
+{#                        <span class="tag">Geo-political Entity</span>#}
+{#                    </div>#}
+{#                    <div class="trending-entity-timeline">#}
+{#                        <canvas id="timeline-0" class="timeline"></canvas>#}
+{#                    </div>#}
+{#                </li>#}
+{#                <li class="trending-entity">#}
+{#                    <div class="trending-entity-name">Barack Obama</div>#}
+{#                    <div class="trending-entity-info">#}
+{#                        <span class="tag">213,120</span>#}
+{#                        <span class="tag">Person</span>#}
+{#                    </div>#}
+{#                    <div class="trending-entity-timeline">#}
+{#                        <canvas id="timeline-1" class="timeline"></canvas>#}
+{#                    </div>#}
+{#                </li>#}
+{#                <li class="trending-entity">#}
+{#                    <div class="trending-entity-name">New York State</div>#}
+{#                    <div class="trending-entity-info">#}
+{#                        <span class="tag">102,398</span>#}
+{#                        <span class="tag">Geo-political Entity</span>#}
+{#                    </div>#}
+{#                    <div class="trending-entity-timeline">#}
+{#                        <canvas id="timeline-2" class="timeline"></canvas>#}
+{#                    </div>#}
+{#                </li>#}
+{#                <li class="trending-entity">#}
+{#                    <div class="trending-entity-name">United States</div>#}
+{#                    <div class="trending-entity-info">#}
+{#                        <span class="tag">235,204</span>#}
+{#                        <span class="tag">Geo-political Entity</span>#}
+{#                    </div>#}
+{#                    <div class="trending-entity-timeline">#}
+{#                        <canvas id="timeline-3" class="timeline"></canvas>#}
+{#                    </div>#}
+{#                </li>#}
+            </ul>
+        </div>
+    </div>
+</div>
+<script src="/static/js/index.js"></script>
+
+</body>
+</html>
