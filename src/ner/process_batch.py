@@ -7,7 +7,8 @@ from nltk import word_tokenize
 from src.ner.util import load_lstm_cnn_elmo_model
 from src.ner.data import process_data
 
-MODEL_DIR = '/shared/nas/data/m1/yinglin8/projects/ir_final'
+# MODEL_DIR = '/shared/nas/data/m1/yinglin8/projects/ir_final'
+DATA_PATH = ''
 MAX_SENTENCE_LEN = 128
 GPU = 2
 USE_GPU = GPU >= 0
@@ -18,9 +19,9 @@ if USE_GPU:
 
 print('Loading name tagging model')
 model, vocabs = load_lstm_cnn_elmo_model(
-    os.path.join(MODEL_DIR, 'eng.nam.mdl'),
-    os.path.join(MODEL_DIR, 'eng.original.5.5b.json'),
-    os.path.join(MODEL_DIR, 'eng.original.5.5b.hdf5'),
+    os.path.join(DATA_PATH, 'eng.nam.mdl'),
+    os.path.join(DATA_PATH, 'eng.original.5.5b.json'),
+    os.path.join(DATA_PATH, 'eng.original.5.5b.hdf5'),
     gpu=USE_GPU, device=GPU
 )
 token_vocab = vocabs['token']

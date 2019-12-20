@@ -109,3 +109,16 @@ def get_localization(top_num=5000):
                 'timestamp': '',
                 'data': {}
             }
+
+
+def get_related(entity_list):
+    with MongoClient(host=settings.DB_HOST, port=settings.DB_PORT) as client:
+        analyze_col = client['analyze']['related']
+        result = {}
+        for entity in entity_list:
+            doc = analyze_col.find_one({'mention': entity})
+            if doc:
+                result[entity] = doc['related']
+            else:
+                result[entity] = []
+        return result

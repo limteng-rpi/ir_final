@@ -3,7 +3,7 @@ import os
 import torch
 import tqdm
 import src.crawl.news.news.settings as settings
-from pymongo import MongoClient
+from pymongo import MongoClient, DESCENDING
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta
 
@@ -157,7 +157,58 @@ def recent_localization(top_num=1000, days=30):
         })
         count_col.create_index('timestamp')
 
+
+def count_related_entities(top_entity_num=50, top_related_num=10, days=14):
+    end_datetime = datetime.utcnow()
+    start_datetime = end_datetime + timedelta(days=-days)
+
+    with MongoClient(host=settings.DB_HOST, port=settings.DB_PORT) as client:
+        # Find trending entities
+        trend_col = client['analyze']['trend_30']
+        results = trend_col.find().sort('timestamp', DESCENDING)
+        last_result = next(results, None)
+        mentions = last_result['mentions'][:top_entity_num]
+        mentions = set([m for m, _, _ in mentions])
+        coocur = {m: Counter() for m in mentions}
+        mention_count = Counter()
+
+        # Find relation entities
+        data_col = client['data']['news']
+        result_col = client['result']['ner']
+        for doc in result_col.find():
+            # timestamp = doc['timestamp']
+            timestamp = data_col.find_one({'url': doc['url']})['timestamp']
+            if start_datetime < timestamp <= end_datetime:
+                doc_mentions = [m for m, _ in doc['mentions']]
+                for m in mentions:
+                    if m in doc_mentions:
+                        for m_ in doc_mentions:
+                            if m == m_:
+                                mention_count[m] += 1
+                            else:
+                                coocur[m][m_] += 1
+
+        related = {}
+        for m in mentions:
+            count = mention_count[m]
+            if count:
+                coocur_mentions = coocur[m]
+                coocur_mentions = [(m, c) for m, c in coocur_mentions.items()]
+                coocur_mentions.sort(key=lambda x: x[-1], reverse=True)
+                coocur_mentions = coocur_mentions[:top_related_num]
+                related[m] = [m for m, _ in coocur_mentions]
+
+        analyze_col = client['analyze']['related']
+        for m, ms in related.items():
+            if analyze_col.find_one({'mention': m}):
+                analyze_col.update_one({'mention': m}, {'$set': {'related': ms}})
+            else:
+                analyze_col.insert_one({'mention': m, 'related': ms})
+        analyze_col.create_index('mention')
+
+
 count_entity_all_time(100)
 count_entity_one_month(100)
 trend_entity_one_month(100, 14)
 recent_localization(5000, 30)
+count_related_entities(top_entity_num=100)

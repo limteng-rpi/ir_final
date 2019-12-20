@@ -30,4 +30,5 @@ def import_geonames(path):
         geo_col.create_index('alternatives')
         geo_col.create_index('gid')
 
-import_geonames('/shared/nas/data/m1/yinglin8/projects/ir_final/geoname_all_countries.txt')
+DATA_PATH = ''
+import_geonames(DATA_PATH + '/geoname_all_countries.txt')

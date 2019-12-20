@@ -1,9 +1,12 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoibGltdGVuZyIsImEiOiJjajJjcGdzNjUwM2NkMndvNzBpeTBrZjFwIn0.9YDJZ3qB_VuNHF3L-ni6PQ';
-
+var trending_entity_list = [];
 
 $(document).ready(function () {
     update_top_entities();
     update_trending_entities();
+    setTimeout(function () {
+        get_related();
+    }, 1000);
     setTimeout(function () {
         update_locals();
     }, 2000);
@@ -60,8 +63,11 @@ var options = {
         xAxes: [{ticks: {display: true, fontSize: 10}}],
         yAxes: [{
             ticks: {
-                display: false,
-                beginAtZero: true
+                display: true,
+                beginAtZero: true,
+                fontSize: 8,
+                autoSkip: true,
+                maxTicksLimit: 8
             }
         }
         ]
@@ -71,71 +77,6 @@ var options = {
     }
 };
 
-//
-// new Chart('timeline-0', {
-//     type: 'line',
-//     data: {
-//         labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
-//         datasets: [{
-//             pointRadius: 0,
-//             borderWidth: 1,
-//             borderColor: '#dd2434',
-//             backgroundColor: 'rgba(143,74,86,0.3)',
-//             data: [1, 3, 4, 5, 7, 2, 35, 150, 9, 2, 1, 4, 15, 102, 210, 304, 23, 12, 0, 1, 2, 1, 1, 3, 4, 5, 7, 2, 35, 690, 9, 2, 1, 4, 15, 102],
-//             label: 'Dataset',
-//             fill: 'start'
-//         }]
-//     },
-//     options: options
-// });
-// new Chart('timeline-1', {
-//     type: 'line',
-//     data: {
-//         labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
-//         datasets: [{
-//             pointRadius: 0,
-//             borderWidth: 1,
-//             borderColor: '#dd2434',
-//             backgroundColor: 'rgba(143,74,86,0.3)',
-//             data: [1, 3, 4, 5, 7, 2, 4, 15, 901, 25, 790, 1, 240, 13, 2, 34, 56, 9, 2, 1, 4, 15, 102, 2, 14, 150, 70, 13, 23, 5, 7, 2, 35, 690, 9, 2, 1, 4, 15, 102],
-//             label: 'Dataset',
-//             fill: 'start'
-//         }]
-//     },
-//     options: options
-// });
-// new Chart('timeline-2', {
-//     type: 'line',
-//     data: {
-//         labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
-//         datasets: [{
-//             pointRadius: 0,
-//             borderWidth: 1,
-//             borderColor: '#dd2434',
-//             backgroundColor: 'rgba(143,74,86,0.3)',
-//             data: [1, 2, 1, 4, 15, 102, 210, 304, 23, 12, 0, 1, 2, 101, 1, 3, 4, 5, 7, 2, 35, 790, 9, 2, 1, 4, 15, 102, 2, 14, 150, 70, 13, 23, 4, 5, 1],
-//             label: 'Dataset',
-//             fill: 'start'
-//         }]
-//     },
-//     options: options
-// });
-// new Chart('timeline-3', {
-//     type: 'line',
-//     data: {
-//         labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
-//         datasets: [{
-//             pointRadius: 0,
-//             borderWidth: 1,
-//             borderColor: '#dd2434',
-//             backgroundColor: 'rgba(143,74,86,0.3)',
-//             data: [1, 3, 4, 5, 7, 2, 35, 150, 9, 2, 1, 4, 15, 102, 210, 304, 23, 12, 0, 1, 2, 1, 1, 3, 4, 5, 7, 2, 35, 690, 9, 2, 1, 4, 15, 102],
-//             label: 'Dataset',
-//             fill: 'start'
-//         }]
-//     },
-//     options: options
-// });
 
 function update_top_entities() {
     $.getJSON('/get_top_entities',
@@ -169,7 +110,7 @@ function update_top_entities() {
 function update_trending_entities() {
     $.getJSON('/get_trending_entities',
         function (response) {
-            console.log(response);
+            // console.log(response);
 
             var trend_entity_list_ul = $('ul#trending-entity-list');
             $.each(response.mentions, function (i, mention) {
@@ -177,8 +118,10 @@ function update_trending_entities() {
 
                 var name_div = $('<div></div>').addClass('trending-entity-name').text(mention[0]);
                 li_div.append(name_div);
+                trending_entity_list.push(mention[0]);
 
-                var info_div = $('<div></div>').addClass('trending-entity-info');
+                var info_div = $('<div></div>').addClass('trending-entity-info')
+                    .attr('entity', mention[0]);
                 info_div.append($('<span></span>').addClass('tag').text(
                     'Count: ' + nummber_with_comma(mention[2])));
                 li_div.append(info_div);
@@ -210,7 +153,6 @@ function update_trending_entities() {
         });
 }
 
-
 function update_locals() {
     $.getJSON('/get_localization', function (response) {
         var data = response.data;
@@ -231,15 +173,36 @@ function update_locals() {
                 // },
                 'circle-radius': {
                     property: 'count',
-                    stops: [[1, 5], [10, 10], [50, 20], [200, 30]]
+                    stops: [[1, 5], [10, 12], [50, 25], [200, 35]]
                 },
                 'circle-opacity': {
                     property: 'count',
-                    stops: [[1, .2], [50, .3], [200, .5]]
+                    stops: [[1, .3], [50, .1], [200, .05]]
                 },
                 'circle-blur': 0
             }
         });
 
     });
+}
+
+function get_related() {
+    // console.log(trending_entity_list);
+    $.post('/get_related',
+        {
+            'entity_list': JSON.stringify(trending_entity_list)
+        },
+        function (response) {
+            $.each(response, function (k, v) {
+                var info_div = $('.trending-entity-info[entity="' + k + '"]');
+                $.each(v, function (i, m) {
+                    info_div.append($('<span></span>')
+                        .addClass('tag')
+                        .addClass('opacity70')
+                        .text(m));
+                });
+            })
+        // console.log(response);
+        },
+        'json');
 }

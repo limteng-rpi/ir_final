@@ -1,6 +1,8 @@
+import json
+
 from flask import Flask, request, render_template, jsonify
 from src.crawl.database.operation import (get_top_entities, get_trend_entities,
-                                          get_localization)
+                                          get_localization, get_related)
 
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
@@ -27,6 +29,14 @@ def op_get_trend_entities():
 def op_get_localization():
     locals = get_localization()
     return jsonify(locals)
+
+
+@app.route('/get_related', methods=['POST'])
+def op_get_related():
+    entity_list = request.form.get('entity_list')
+    entity_list = json.loads(entity_list)
+    related = get_related(entity_list)
+    return jsonify(related)
 
 
 if __name__ == '__main__':
