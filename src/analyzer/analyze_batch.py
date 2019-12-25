@@ -188,15 +188,52 @@ def count_related_entities(top_entity_num=50, top_related_num=10, days=14):
                             else:
                                 coocur[m][m_] += 1
 
+        related_word_set = set()
+        for m in mentions:
+            count = mention_count[m]
+            if count:
+                coocur_mentions = coocur[m]
+                coocur_mentions = [(m_, c) for m_, c in coocur_mentions.items()]
+                coocur_mentions.sort(key=lambda x: x[-1], reverse=True)
+                coocur_mentions = coocur_mentions[:top_related_num * 3]
+                # related[m] = [m for m, _ in coocur_mentions]
+                related_word_set.update([m for m, _ in coocur_mentions])
+
+        # Count again
+        mention_count_ = Counter()
+        coocur_ = {m: Counter() for m in related_word_set}
+        for doc in result_col.find():
+            timestamp = data_col.find_one({'url': doc['url']})['timestamp']
+            if start_datetime < timestamp <= end_datetime:
+                doc_mentions = [m for m, _ in doc['mentions']]
+                for m in related_word_set:
+                    if m in doc_mentions:
+                        for m_ in doc_mentions:
+                            if m == m_:
+                                mention_count_[m] += 1
+                            else:
+                                coocur_[m][m_] += 1
+
+        # Calculate s
         related = {}
         for m in mentions:
             count = mention_count[m]
             if count:
                 coocur_mentions = coocur[m]
-                coocur_mentions = [(m, c) for m, c in coocur_mentions.items()]
+                coocur_mentions = [(m_, c) for m_, c in coocur_mentions.items()]
                 coocur_mentions.sort(key=lambda x: x[-1], reverse=True)
-                coocur_mentions = coocur_mentions[:top_related_num]
-                related[m] = [m for m, _ in coocur_mentions]
+                coocur_mentions = coocur_mentions[:top_related_num * 3]
+
+                coocur_mentions_ = []
+                for m_, c in coocur_mentions:
+                    count_ = mention_count_[m_]
+                    c_ = coocur_[m_].get(m, 1)
+                    s = c / count + c_ / count_
+                    coocur_mentions_.append((m_, s))
+                coocur_mentions_.sort(key=lambda x: x[-1], reverse=True)
+                coocur_mentions_ = coocur_mentions_[:top_related_num]
+                related[m] = [m_ for m_, _ in coocur_mentions_]
+
 
         analyze_col = client['analyze']['related']
         for m, ms in related.items():

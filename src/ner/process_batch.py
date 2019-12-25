@@ -8,7 +8,7 @@ from src.ner.util import load_lstm_cnn_elmo_model
 from src.ner.data import process_data
 
 # MODEL_DIR = '/shared/nas/data/m1/yinglin8/projects/ir_final'
-DATA_PATH = ''
+DATA_PATH = '/shared/nas/data/m1/yinglin8/projects/ir_final'
 MAX_SENTENCE_LEN = 128
 GPU = 2
 USE_GPU = GPU >= 0

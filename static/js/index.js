@@ -173,11 +173,11 @@ function update_locals() {
                 // },
                 'circle-radius': {
                     property: 'count',
-                    stops: [[1, 5], [10, 12], [50, 25], [200, 35]]
+                    stops: [[1, 3], [10, 10], [50, 20], [200, 30]]
                 },
                 'circle-opacity': {
                     property: 'count',
-                    stops: [[1, .3], [50, .1], [200, .05]]
+                    stops: [[1, .2], [50, .1], [200, .05]]
                 },
                 'circle-blur': 0
             }
