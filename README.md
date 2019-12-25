@@ -21,4 +21,13 @@
 - Run `scrapy crawl bbc`
 
 # Run Name Tagger
-- 
+- Download our data from https://drive.google.com/file/d/1QdOSLNd5a98Cm4VxjbyJi2w6YI6aPE8z/view?usp=sharing and extract it to `<DATA_PATH>`
+- Change line 11 in `src/ner/process_batch.py` to `DATA_PATH = <DATA_PATH>`
+- Run `python src/ner/process_batch.py`
+
+# Run Analyzer
+- Import GeoNames entries: change line 33 in `src/crawl/database/geonames.py` to `DATA_PATH = <DATA_PATH>` and run `python src/crawl/database/geonames.py`
+- Run `python src/analyzer/analyze_batch.py`
+
+# Run Demo
+- Run `python app.py` and visit `<YOUR_IP_ADDRESS>:12181` or delete the host argument in line 43 and visit `127.0.0.1:12181`
